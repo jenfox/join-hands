@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  join-hands-mysql-db:
+    image: mysql:latest
+    container_name: join-hands-mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: jhadmin
+      MYSQL_PASSWORD: 123456jh
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - mysqldb/datebase:/var/lib/mysql
+    restart: unless-stopped
+  join-hands-mongo-db:
+    image: mongo:latest
+    container_name: join-hands-mongo-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: jhadmin
+      MONGO_INITDB_ROOT_PASSWORD: 123456jh
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb/database:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo 10.10.10.60:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+volumes:
+  mysqldb:
+    name: mysqldb
+  mongodb:
+    name: mongodb
